@@ -1,0 +1,390 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Creating spark sessions.\n",
+    "\n",
+    "Spark session is entry point for spark. This contains all configuration. Think like a main method of class.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from pyspark.sql import SparkSession\n",
+    "\n",
+    "spark = SparkSession \\\n",
+    "    .builder \\\n",
+    "    .appName(\"Python Spark SQL basic example\") \\\n",
+    "    .getOrCreate()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## File reading\n",
+    "\n",
+    "* Spark can read wide verity of files.  Json, CSV, Text files, Parquet and Avro.\n",
+    "- Spark has three abstractions. Dataset, Dataframe, RDD.\n",
+    "- Rdd - (Resilient Distributed Data) - very initial abstraction of the data. Every operation has to be programmed.\n",
+    "- DataFrame - Very efficident data abstraction. Think like RDD + Structure. Any data that has structure, JSON, CSV,XML and Parquet files can be read very easily.\n",
+    "- DataSet - Dataset is exactly like DataFrame except that it does not need schema. An improved version of RDD that can also has DataFrame's optimizations"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Parquet file format (just for reference)\n",
+    "\n",
+    "- Parquet (read like parque) is a file format like csv or json or xml. This compresses the data and data will be binary formation (you cannot open and read it unlike csv.)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## So what is difference between normal file read and spark\n",
+    "\n",
+    "Spark processes the data in parallel. When you read the data, based on the size it can break the data and process it in parallel. To process in parallel you need to allocate capacity (cores)\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Data Frame:\n",
+    "* DataFrames are the most used abstractions. When i say abstraction, it is a wrapper around the data in memory.\n",
+    "\n",
+    "- With the dataframe, you can do all processing with lot of pre-built methods that spark comes by default.  \n",
+    "\n",
+    "- You can also process the data in the form of queries\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## What kind of data processing is done in spark.?\n",
+    "\n",
+    "Spark has two types of operations\n",
+    "1. Transformations\n",
+    "2. Actions.\n",
+    "\n",
+    "**Transformations:** any structural changes of the data. example, adding new columns, updating any data, dropping any columns\n",
+    "\n",
+    "**Actions:** Outcomes of processing. Eg: Saving file, getting count of records, getting all elements.\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### What kind of work Spark can do.\n",
+    "\n",
+    "* Spark can do something called batch operations and streming/real-time operations.\n",
+    "\n",
+    "- Batch workload: Its like processing data at once. For eg: running to process all files in a folder\n",
+    "\n",
+    "Real-time workload: This is called streaming processing. The data comes continously and spark processes them continously. Think like water stream and a fish net. data comes continously and spark job processes on the fly\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### File reading example. CSV File is used."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Either use \n",
+    "\n",
+    "wget https://raw.githubusercontent.com/srini-daruna/temp-repo/master/spark-demo/city_attributes.csv .\n",
+    "or\n",
+    "download the file directly from the link "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "metadata": {},
+   "outputs": [
+    {
+     "ename": "AnalysisException",
+     "evalue": "Path does not exist: file:/Users/daruns/workspace/monro/spark-demo/city_attributes.csv;",
+     "output_type": "error",
+     "traceback": [
+      "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+      "\u001b[0;31mAnalysisException\u001b[0m                         Traceback (most recent call last)",
+      "\u001b[0;32m<ipython-input-20-9b6842505e18>\u001b[0m in \u001b[0;36m<module>\u001b[0;34m\u001b[0m\n\u001b[1;32m      1\u001b[0m df1 = spark.read.option(\n\u001b[1;32m      2\u001b[0m     \u001b[0;34m\"header\"\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\"true\"\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mcsv\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m----> 3\u001b[0;31m     \"./spark-demo/city_attributes.csv\")\n\u001b[0m",
+      "\u001b[0;32m~/workspace/software/spark-3.0.0-bin-hadoop2.7/python/pyspark/sql/readwriter.py\u001b[0m in \u001b[0;36mcsv\u001b[0;34m(self, path, schema, sep, encoding, quote, escape, comment, header, inferSchema, ignoreLeadingWhiteSpace, ignoreTrailingWhiteSpace, nullValue, nanValue, positiveInf, negativeInf, dateFormat, timestampFormat, maxColumns, maxCharsPerColumn, maxMalformedLogPerPartition, mode, columnNameOfCorruptRecord, multiLine, charToEscapeQuoteEscaping, samplingRatio, enforceSchema, emptyValue, locale, lineSep, pathGlobFilter, recursiveFileLookup)\u001b[0m\n\u001b[1;32m    533\u001b[0m             \u001b[0mpath\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0;34m[\u001b[0m\u001b[0mpath\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    534\u001b[0m         \u001b[0;32mif\u001b[0m \u001b[0mtype\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mpath\u001b[0m\u001b[0;34m)\u001b[0m \u001b[0;34m==\u001b[0m \u001b[0mlist\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m--> 535\u001b[0;31m             \u001b[0;32mreturn\u001b[0m \u001b[0mself\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0m_df\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mself\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0m_jreader\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mcsv\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mself\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0m_spark\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0m_sc\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0m_jvm\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mPythonUtils\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mtoSeq\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mpath\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m    536\u001b[0m         \u001b[0;32melif\u001b[0m \u001b[0misinstance\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mpath\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mRDD\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    537\u001b[0m             \u001b[0;32mdef\u001b[0m \u001b[0mfunc\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0miterator\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+      "\u001b[0;32m~/workspace/software/spark-3.0.0-bin-hadoop2.7/python/lib/py4j-0.10.9-src.zip/py4j/java_gateway.py\u001b[0m in \u001b[0;36m__call__\u001b[0;34m(self, *args)\u001b[0m\n\u001b[1;32m   1303\u001b[0m         \u001b[0manswer\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0mself\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mgateway_client\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0msend_command\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mcommand\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m   1304\u001b[0m         return_value = get_return_value(\n\u001b[0;32m-> 1305\u001b[0;31m             answer, self.gateway_client, self.target_id, self.name)\n\u001b[0m\u001b[1;32m   1306\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m   1307\u001b[0m         \u001b[0;32mfor\u001b[0m \u001b[0mtemp_arg\u001b[0m \u001b[0;32min\u001b[0m \u001b[0mtemp_args\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+      "\u001b[0;32m~/workspace/software/spark-3.0.0-bin-hadoop2.7/python/pyspark/sql/utils.py\u001b[0m in \u001b[0;36mdeco\u001b[0;34m(*a, **kw)\u001b[0m\n\u001b[1;32m    135\u001b[0m                 \u001b[0;31m# Hide where the exception came from that shows a non-Pythonic\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    136\u001b[0m                 \u001b[0;31m# JVM exception message.\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m--> 137\u001b[0;31m                 \u001b[0mraise_from\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mconverted\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m    138\u001b[0m             \u001b[0;32melse\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    139\u001b[0m                 \u001b[0;32mraise\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+      "\u001b[0;32m~/workspace/software/spark-3.0.0-bin-hadoop2.7/python/pyspark/sql/utils.py\u001b[0m in \u001b[0;36mraise_from\u001b[0;34m(e)\u001b[0m\n",
+      "\u001b[0;31mAnalysisException\u001b[0m: Path does not exist: file:/Users/daruns/workspace/monro/spark-demo/city_attributes.csv;"
+     ]
+    }
+   ],
+   "source": [
+    "df1 = spark.read.option(\n",
+    "    \"header\",\"true\").csv(\n",
+    "    \"./spark-demo/city_attributes.csv\")\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Basic operations.\n",
+    "\n",
+    "Some basic operations to play with are, \n",
+    "\n",
+    "* printSchema : Shows the structure of the data\n",
+    "- count : gives total record count\n",
+    "- show: like display in pandas. Shows 20 records sample. The records to show can be adjusted. default value is 20\n",
+    "- collect: get all records in a list"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "+-------------+-------------+---------+-----------+\n",
+      "|         City|      Country| Latitude|  Longitude|\n",
+      "+-------------+-------------+---------+-----------+\n",
+      "|    Vancouver|       Canada| 49.24966|-123.119339|\n",
+      "|     Portland|United States|45.523449|-122.676208|\n",
+      "|San Francisco|United States|37.774929|-122.419418|\n",
+      "|      Seattle|United States|47.606209|-122.332069|\n",
+      "|  Los Angeles|United States|34.052231|-118.243683|\n",
+      "|    San Diego|United States|32.715328|-117.157257|\n",
+      "|    Las Vegas|United States|36.174969|-115.137222|\n",
+      "|      Phoenix|United States| 33.44838|-112.074043|\n",
+      "|  Albuquerque|United States|35.084492|-106.651138|\n",
+      "|       Denver|United States|39.739151|-104.984703|\n",
+      "|  San Antonio|United States| 29.42412| -98.493629|\n",
+      "|       Dallas|United States|32.783058| -96.806671|\n",
+      "|      Houston|United States|29.763281| -95.363274|\n",
+      "|  Kansas City|United States|39.099731| -94.578568|\n",
+      "|  Minneapolis|United States|44.979969|  -93.26384|\n",
+      "|  Saint Louis|United States| 38.62727| -90.197891|\n",
+      "|      Chicago|United States|41.850029| -87.650047|\n",
+      "|    Nashville|United States| 36.16589| -86.784439|\n",
+      "| Indianapolis|United States|39.768379| -86.158043|\n",
+      "|      Atlanta|United States|33.749001| -84.387978|\n",
+      "+-------------+-------------+---------+-----------+\n",
+      "only showing top 20 rows\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "df1.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "36"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df1.count()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "root\n",
+      " |-- City: string (nullable = true)\n",
+      " |-- Country: string (nullable = true)\n",
+      " |-- Latitude: string (nullable = true)\n",
+      " |-- Longitude: string (nullable = true)\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "df1.printSchema()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### You can filter the data like below"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "+------------+-------------+---------+----------+\n",
+      "|        City|      Country| Latitude| Longitude|\n",
+      "+------------+-------------+---------+----------+\n",
+      "|Indianapolis|United States|39.768379|-86.158043|\n",
+      "+------------+-------------+---------+----------+\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "df1.filter(\"City = 'Indianapolis'\").show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "+-------------+-------------+---------+-----------+--------------+\n",
+      "|         City|      Country| Latitude|  Longitude|    new_column|\n",
+      "+-------------+-------------+---------+-----------+--------------+\n",
+      "|    Vancouver|       Canada| 49.24966|-123.119339|this is sample|\n",
+      "|     Portland|United States|45.523449|-122.676208|this is sample|\n",
+      "|San Francisco|United States|37.774929|-122.419418|this is sample|\n",
+      "|      Seattle|United States|47.606209|-122.332069|this is sample|\n",
+      "|  Los Angeles|United States|34.052231|-118.243683|this is sample|\n",
+      "|    San Diego|United States|32.715328|-117.157257|this is sample|\n",
+      "|    Las Vegas|United States|36.174969|-115.137222|this is sample|\n",
+      "|      Phoenix|United States| 33.44838|-112.074043|this is sample|\n",
+      "|  Albuquerque|United States|35.084492|-106.651138|this is sample|\n",
+      "|       Denver|United States|39.739151|-104.984703|this is sample|\n",
+      "|  San Antonio|United States| 29.42412| -98.493629|this is sample|\n",
+      "|       Dallas|United States|32.783058| -96.806671|this is sample|\n",
+      "|      Houston|United States|29.763281| -95.363274|this is sample|\n",
+      "|  Kansas City|United States|39.099731| -94.578568|this is sample|\n",
+      "|  Minneapolis|United States|44.979969|  -93.26384|this is sample|\n",
+      "|  Saint Louis|United States| 38.62727| -90.197891|this is sample|\n",
+      "|      Chicago|United States|41.850029| -87.650047|this is sample|\n",
+      "|    Nashville|United States| 36.16589| -86.784439|this is sample|\n",
+      "| Indianapolis|United States|39.768379| -86.158043|this is sample|\n",
+      "|      Atlanta|United States|33.749001| -84.387978|this is sample|\n",
+      "+-------------+-------------+---------+-----------+--------------+\n",
+      "only showing top 20 rows\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "## You can new column like this\n",
+    "# you need to use lit to add a constant. lit means literal\n",
+    "from pyspark.sql.functions import lit\n",
+    "df2 = df1.withColumn(\"new_column\",lit(\"this is sample\"))\n",
+    "df2.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "+-------------+-------------+---------+--------------+\n",
+      "|         City|      Country| Latitude|    new_column|\n",
+      "+-------------+-------------+---------+--------------+\n",
+      "|    Vancouver|       Canada| 49.24966|this is sample|\n",
+      "|     Portland|United States|45.523449|this is sample|\n",
+      "|San Francisco|United States|37.774929|this is sample|\n",
+      "|      Seattle|United States|47.606209|this is sample|\n",
+      "|  Los Angeles|United States|34.052231|this is sample|\n",
+      "|    San Diego|United States|32.715328|this is sample|\n",
+      "|    Las Vegas|United States|36.174969|this is sample|\n",
+      "|      Phoenix|United States| 33.44838|this is sample|\n",
+      "|  Albuquerque|United States|35.084492|this is sample|\n",
+      "|       Denver|United States|39.739151|this is sample|\n",
+      "|  San Antonio|United States| 29.42412|this is sample|\n",
+      "|       Dallas|United States|32.783058|this is sample|\n",
+      "|      Houston|United States|29.763281|this is sample|\n",
+      "|  Kansas City|United States|39.099731|this is sample|\n",
+      "|  Minneapolis|United States|44.979969|this is sample|\n",
+      "|  Saint Louis|United States| 38.62727|this is sample|\n",
+      "|      Chicago|United States|41.850029|this is sample|\n",
+      "|    Nashville|United States| 36.16589|this is sample|\n",
+      "| Indianapolis|United States|39.768379|this is sample|\n",
+      "|      Atlanta|United States|33.749001|this is sample|\n",
+      "+-------------+-------------+---------+--------------+\n",
+      "only showing top 20 rows\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "# drop column\n",
+    "df2.drop(\"Longitude\").show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.7.0"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}
